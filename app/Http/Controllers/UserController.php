@@ -32,16 +32,17 @@ class UserController extends Controller
     }
 
     public static function updateDataFromFacebook($access_token){
-        $request = UserController::httpGet('https://graph.facebook.com/me?fields=id,name,email&access_token=' . $access_token);
+        $request = UserController::httpGet('https://graph.facebook.com/me?fields=id,name,email,gender&access_token=' . $access_token);
         $json = json_decode($request, true);
         $id = $json['id'];
-        $name = is_null($json['name']) ? null : $json['name'];
-        $email = is_null($json['email']) ? null : $json['email'];
+        $name = array_key_exists('name', $json) ? $json['name'] : null;
+        $email = array_key_exists('email', $json) ? $json['email'] : null;
+        $gender = array_key_exists('gender', $json) ? $json['gender'] : null;
         $account = Account::find($id);
         if (!$account) {
-            $account = Account::create(['name' => $name, 'id' => $id, 'email' => $email, 'points' => 0, 'scanned' => []]);
+            $account = Account::create(['name' => $name, 'id' => $id, 'email' => $email, 'gender' => $gender, 'points' => 0, 'scanned' => []]);
         } else {
-            $account->update(['name' => $name, 'email' => $email]);
+            $account->update(['name' => $name, 'email' => $email, 'gender' => $gender]);
         }
         return $account;
     }

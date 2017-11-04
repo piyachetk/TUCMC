@@ -17,6 +17,7 @@ class CreateAccountsTable extends Migration
             $table->string('id');
             $table->primary('id');
             $table->string('name');
+            $table->string('gender');
             $table->string('email')->nullable();
             $table->unsignedInteger('points');
             $table->mediumText('scanned');
