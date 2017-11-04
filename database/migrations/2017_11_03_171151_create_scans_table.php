@@ -14,6 +14,7 @@ class CreateScansTable extends Migration
     public function up()
     {
         Schema::create('scans', function (Blueprint $table) {
+            $table->string('id');
             $table->primary('id');
             $table->unsignedInteger('points');
             $table->unsignedInteger('scanCount');
