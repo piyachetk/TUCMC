@@ -15,21 +15,19 @@ class UserController extends Controller
     }
 
     public static function getAppAccessToken(){
-        $request =  UserController::httpGet('https:/graph.facebook.com/oauth/access_token?client_id='.env('FACEBOOK_APP_ID').'&client_secret='.env('FACEBOOK_APP_SECRET').'&grant_type=client_credentials');
+        $request =  UserController::httpGet('https://graph.facebook.com/oauth/access_token?client_id='.env('FACEBOOK_APP_ID').'&client_secret='.env('FACEBOOK_APP_SECRET').'&grant_type=client_credentials');
         $json = json_decode($request, true);
         return $json['access_token'];
     }
 
     public static function getTokenInfo($access_token){
-        $request = UserController::httpGet('https:/graph.facebook.com/debug_token?input_token=' . $access_token .'&access_token='. UserController::getAppAccessToken());
-        Log::info($request);
+        $request = UserController::httpGet('https://graph.facebook.com/debug_token?input_token=' . $access_token .'&access_token='. UserController::getAppAccessToken());
         $json = json_decode($request, true);
         return $json;
     }
 
     public static function isAccessTokenValid($access_token){
         $json = UserController::getTokenInfo($access_token);
-        Log::info($json);
         return $json['data']['is_valid'];
     }
 
