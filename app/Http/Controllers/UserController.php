@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Account;
 use App\Scan;
 use \Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -26,12 +27,14 @@ class UserController extends Controller
 
     public static function getTokenInfo($access_token){
         $request = UserController::httpGet('https:/graph.facebook.com/debug_token?input_token=' . $access_token .'&access_token='. UserController::getAppAccessToken());
+        Log::info($request);
         $json = json_decode($request, true);
         return $json;
     }
 
     public static function isAccessTokenValid($access_token){
         $json = UserController::getTokenInfo($access_token);
+        Log::info($json);
         return $json['data']['is_valid'];
     }
 
