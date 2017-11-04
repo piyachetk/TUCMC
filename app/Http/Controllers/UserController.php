@@ -8,14 +8,24 @@ use \Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+    public static function httpGet($url)
+    {
+        $ch = curl_init($url); // such as http://example.com/example.xml
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        $data = curl_exec($ch);
+        curl_close($ch);
+        return $data;
+    }
+
     public static function getAppAccessToken(){
-        $request =  file_get_contents('https:/graph.facebook.com/oauth/access_token?client_id='.env('FACEBOOK_APP_ID').'&client_secret='.env('FACEBOOK_APP_SECRET').'&grant_type=client_credentials');
+        $request =  UserController::httpGet('https:/graph.facebook.com/oauth/access_token?client_id='.env('FACEBOOK_APP_ID').'&client_secret='.env('FACEBOOK_APP_SECRET').'&grant_type=client_credentials');
         $json = json_decode($request, true);
         return $json['access_token'];
     }
 
     public static function getTokenInfo($access_token){
-        $request = file_get_contents('https:/graph.facebook.com/debug_token?input_token=' . $access_token .'&access_token='. UserController::getAppAccessToken());
+        $request = UserController::httpGet('https:/graph.facebook.com/debug_token?input_token=' . $access_token .'&access_token='. UserController::getAppAccessToken());
         $json = json_decode($request, true);
         return $json;
     }
@@ -26,7 +36,7 @@ class UserController extends Controller
     }
 
     public static function updateDataFromFacebook($access_token){
-        $request = file_get_contents('https://graph.facebook.com/me?fields=id,name,email&access_token=' . $access_token);
+        $request = UserController::httpGet('https://graph.facebook.com/me?fields=id,name,email&access_token=' . $access_token);
         $json = json_decode($request, true);
         $id = $json['id'];
         $name = is_null($json['name']) ? null : $json['name'];
@@ -42,7 +52,7 @@ class UserController extends Controller
 
     public function extendToken(Request $request){
         $access_token = $request->get('access_token');
-        $request = file_get_contents('https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id='.env('FACEBOOK_APP_ID').'&client_secret='.env('FACEBOOK_APP_SECRET').'&fb_exchange_token=' . $access_token);
+        $request = UserController::httpGet('https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id='.env('FACEBOOK_APP_ID').'&client_secret='.env('FACEBOOK_APP_SECRET').'&fb_exchange_token=' . $access_token);
         $json = json_decode($request, true);
         return $json['access_token'];
     }
