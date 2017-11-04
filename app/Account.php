@@ -14,5 +14,7 @@ class Account extends Model
         'scanned' => 'array',
     ];
 
+    protected $table = 'accounts';
+
     public $incrementing = false;
 }

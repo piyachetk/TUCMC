@@ -10,5 +10,7 @@ class Scan extends Model
         'id', 'scanCount', 'points', 'description'
     ];
 
+    protected $table = 'scans';
+
     public $incrementing = false;
 }
